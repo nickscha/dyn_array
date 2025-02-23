@@ -2,12 +2,11 @@ name: Compile and Run dyn_array.h tests
 on: [push, pull_request]
 
 jobs:
-  ubuntu-macos:
+  ubuntu:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
         cc: [gcc, clang]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -17,11 +16,28 @@ jobs:
         run: ${{ matrix.cc }} -O2 -std=c89 -pedantic -Wall -Wextra -Werror -Wvla -Wconversion -Wdouble-promotion -Wsign-conversion -Wuninitialized -Winit-self -Wunused -Wunused-macros -Wunused-local-typedefs -o dyn_array_test_${{ matrix.cc }} tests/dyn_array_test.c
       - name: Run dyn_array tests
         run: ./dyn_array_test_${{ matrix.cc }}
-      - name: Upload build folder
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-build-folder
-          path: build/
+          name: ubuntu-latest-build-folder
+          path: dyn_array_test_${{ matrix.cc }}
+  macos:
+    strategy:
+      matrix:
+        cc: [clang]
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Compile dyn_array tests
+        run: ${{ matrix.cc }} -O2 -std=c89 -pedantic -Wall -Wextra -Werror -Wvla -Wconversion -Wdouble-promotion -Wsign-conversion -Wuninitialized -Winit-self -Wunused -Wunused-macros -Wunused-local-typedefs -o dyn_array_test_${{ matrix.cc }} tests/dyn_array_test.c
+      - name: Run dyn_array tests
+        run: ./dyn_array_test_${{ matrix.cc }}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-latest-build-folder
+          path: dyn_array_test_${{ matrix.cc }}
   windows:
     strategy:
       matrix:
@@ -36,8 +52,8 @@ jobs:
         run: ${{ matrix.cc }} -O2 -std=c89 -pedantic -Wall -Wextra -Werror -Wvla -Wconversion -Wdouble-promotion -Wsign-conversion -Wuninitialized -Winit-self -Wunused -Wunused-macros -Wunused-local-typedefs -o dyn_array_test_${{ matrix.cc }}.exe tests/dyn_array_test.c
       - name: Run dyn_array tests
         run: .\dyn_array_test_${{ matrix.cc }}.exe
-      - name: Upload build folder
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-latest-build-folder
-          path: build/
+          path: dyn_array_test_${{ matrix.cc }}.exe
