@@ -1,0 +1,43 @@
+name: Compile and Run dyn_array.h tests
+on: [push, pull_request]
+
+jobs:
+  ubuntu-macos:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        cc: [gcc, clang]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: sudo apt update && sudo apt install -y ${{ matrix.cc }}
+      - name: Compile dyn_array tests
+        run: ${{ matrix.cc }} -O2 -std=c89 -pedantic -Wall -Wextra -Werror -Wvla -Wconversion -Wdouble-promotion -Wsign-conversion -Wuninitialized -Winit-self -Wunused -Wunused-macros -Wunused-local-typedefs -o dyn_array_test_${{ matrix.cc }} tests/dyn_array_test.c
+      - name: Run dyn_array tests
+        run: ./dyn_array_test_${{ matrix.cc }}
+      - name: Upload build folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-build-folder
+          path: build/
+  windows:
+    strategy:
+      matrix:
+        cc: [gcc, clang]
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: choco install -y llvm mingw
+      - name: Compile dyn_array tests
+        run: ${{ matrix.cc }} -O2 -std=c89 -pedantic -Wall -Wextra -Werror -Wvla -Wconversion -Wdouble-promotion -Wsign-conversion -Wuninitialized -Winit-self -Wunused -Wunused-macros -Wunused-local-typedefs -o dyn_array_test_${{ matrix.cc }}.exe tests/dyn_array_test.c
+      - name: Run dyn_array tests
+        run: .\dyn_array_test_${{ matrix.cc }}.exe
+      - name: Upload build folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-latest-build-folder
+          path: build/
