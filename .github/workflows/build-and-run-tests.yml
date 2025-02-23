@@ -19,7 +19,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ubuntu-latest-build-folder
+          name: ubuntu-latest-${{ matrix.cc }}-dyn_array_test
           path: dyn_array_test_${{ matrix.cc }}
   macos:
     strategy:
@@ -36,7 +36,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: macos-latest-build-folder
+          name: macos-latest-${{ matrix.cc }}-dyn_array_test
           path: dyn_array_test_${{ matrix.cc }}
   windows:
     strategy:
@@ -55,5 +55,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: windows-latest-build-folder
+          name: windows-latest-${{ matrix.cc }}-dyn_array_test
           path: dyn_array_test_${{ matrix.cc }}.exe
