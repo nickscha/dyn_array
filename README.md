@@ -27,6 +27,8 @@ int main() {
 
     dyn_array_del(myNumbers);    /* Delete last element */
     dyn_array_free(myNumbers);   /* Free array. Invokes the "DYN_ARRAY_FUNCTION_FREE" */
+
+    return 0;
 }
 ```
 
