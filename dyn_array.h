@@ -178,6 +178,16 @@ static DYN_ARRAY_INLINE void dyn_array_free(dyn_array_header *type)
 
 #define dyn_array_init(t, c) (dyn_array_grow(t, c, 0))
 #define dyn_array_add(t, v) (dyn_array_grow_check(t, 1), (t)[dyn_array_header(t)->length++] = (v))
+#define dyn_array_add_array(t, a, c)               \
+  do                                               \
+  {                                                \
+    unsigned int i;                                \
+    dyn_array_grow_check(t, c);                    \
+    for (i = 0; i < c; ++i)                        \
+    {                                              \
+      (t)[dyn_array_header(t)->length++] = (a)[i]; \
+    }                                              \
+  } while (0)
 #define dyn_array_del(t) (dyn_array_header(t)->length > 0 ? dyn_array_header(t)->length-- : 0)
 #define dyn_array_last(t) ((t)[dyn_array_header(t)->length - 1])
 #define dyn_array_free(t) ((void)((t) ? dyn_array_free(dyn_array_header(t)) : (void)0), (t) = DYN_ARRAY_NULL)

@@ -158,6 +158,41 @@ void dyn_array_test_big_capacity(void)
     assert(dyn_array_stats_init - dyn_array_stats_free == 0);
 }
 
+#define DYN_ARRAY_TEST_NUM_MODELS 16
+void dyn_array_test_add_array(void)
+{
+    unsigned int i;
+    float *numbers = 0;
+    float model[DYN_ARRAY_TEST_NUM_MODELS];
+
+    dyn_array_stats_reset();
+
+    for (i = 0; i < DYN_ARRAY_TEST_NUM_MODELS; ++i)
+    {
+        model[i] = 1.0f + (float)i;
+    }
+
+    /* Add model array directly to dyn_array*/
+    dyn_array_add_array(numbers, model, DYN_ARRAY_TEST_NUM_MODELS);
+
+    assert(dyn_array_length(numbers) == DYN_ARRAY_TEST_NUM_MODELS);
+    assert(dyn_array_capacity(numbers) == DYN_ARRAY_TEST_NUM_MODELS);
+
+    for (i = 0; i < dyn_array_length(numbers); ++i)
+    {
+        assert(numbers[i] == 1.0f + (float)i);
+    }
+
+    dyn_array_free(numbers);
+
+    assert(!numbers);
+    assert(dyn_array_stats_init == 1);
+    assert(dyn_array_stats_realloc == 1);
+    assert(dyn_array_stats_grow_with_factor == 1);
+    assert(dyn_array_stats_free == 1);
+    assert(dyn_array_stats_init - dyn_array_stats_free == 0);
+}
+
 int main(void)
 {
 
@@ -165,6 +200,7 @@ int main(void)
     dyn_array_test_simple_type();
     dyn_array_test_complex_type();
     dyn_array_test_big_capacity();
+    dyn_array_test_add_array();
 
     return 0;
 }
