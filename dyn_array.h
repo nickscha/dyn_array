@@ -148,8 +148,13 @@ static DYN_ARRAY_INLINE void *dyn_array_grow_function(void *type, unsigned int t
     DYN_ARRAY_STATS(++dyn_array_stats_grow_with_factor);
   }
 
-  /* TODO: check if allocation was successful */
   b = DYN_ARRAY_FUNCTION_REALLOC((type) ? dyn_array_header(type) : 0, type_size * capacity + sizeof(dyn_array_header));
+
+  if (!b)
+  {
+    return DYN_ARRAY_NULL;
+  }
+
   b = (char *)b + sizeof(dyn_array_header);
 
   DYN_ARRAY_STATS(++dyn_array_stats_realloc);
@@ -167,7 +172,7 @@ static DYN_ARRAY_INLINE void *dyn_array_grow_function(void *type, unsigned int t
   return (b);
 }
 
-static DYN_ARRAY_INLINE void dyn_array_free(dyn_array_header *type)
+static DYN_ARRAY_INLINE void dyn_array_free_function(dyn_array_header *type)
 {
   DYN_ARRAY_STATS(++dyn_array_stats_free);
   DYN_ARRAY_FUNCTION_FREE(type);
@@ -190,7 +195,7 @@ static DYN_ARRAY_INLINE void dyn_array_free(dyn_array_header *type)
   } while (0)
 #define dyn_array_del(t) (dyn_array_header(t)->length > 0 ? dyn_array_header(t)->length-- : 0)
 #define dyn_array_last(t) ((t)[dyn_array_header(t)->length - 1])
-#define dyn_array_free(t) ((void)((t) ? dyn_array_free(dyn_array_header(t)) : (void)0), (t) = DYN_ARRAY_NULL)
+#define dyn_array_free(t) ((void)((t) ? dyn_array_free_function(dyn_array_header(t)) : (void)0), (t) = DYN_ARRAY_NULL)
 
 #endif /* DYN_ARRAY_H */
 
