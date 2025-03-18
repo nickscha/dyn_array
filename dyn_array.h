@@ -87,12 +87,16 @@ LICENSE
 /* Check if using C99 or later (inline is supported) */
 #if __STDC_VERSION__ >= 199901L
 #define DYN_ARRAY_INLINE inline
+#define DYN_ARRAY_API extern
 #elif defined(__GNUC__) || defined(__clang__)
 #define DYN_ARRAY_INLINE __inline__
+#define DYN_ARRAY_API static
 #elif defined(_MSC_VER)
 #define DYN_ARRAY_INLINE __inline
+#define DYN_ARRAY_API static
 #else
 #define DYN_ARRAY_INLINE
+#define DYN_ARRAY_API static
 #endif
 
 #ifndef DYN_ARRAY_GROW_FACTOR_FUNCTION
@@ -113,7 +117,7 @@ unsigned int dyn_array_stats_realloc;
 unsigned int dyn_array_stats_grow_with_factor;
 unsigned int dyn_array_stats_free;
 
-static DYN_ARRAY_INLINE void dyn_array_stats_reset(void)
+DYN_ARRAY_API DYN_ARRAY_INLINE void dyn_array_stats_reset(void)
 {
   dyn_array_stats_init = 0;
   dyn_array_stats_realloc = 0;
@@ -138,7 +142,7 @@ typedef struct dyn_array_header
 #define dyn_array_capacity(t) ((t) ? dyn_array_header(t)->capacity : 0)
 #define dyn_array_length(t) ((t) ? dyn_array_header(t)->length : 0)
 
-static DYN_ARRAY_INLINE void *dyn_array_grow_function(void *type, unsigned int type_size, unsigned int capacity, unsigned int add_length)
+DYN_ARRAY_API DYN_ARRAY_INLINE void *dyn_array_grow_function(void *type, unsigned int type_size, unsigned int capacity, unsigned int add_length)
 {
   void *b;
 
@@ -172,7 +176,7 @@ static DYN_ARRAY_INLINE void *dyn_array_grow_function(void *type, unsigned int t
   return (b);
 }
 
-static DYN_ARRAY_INLINE void dyn_array_free_function(dyn_array_header *type)
+DYN_ARRAY_API DYN_ARRAY_INLINE void dyn_array_free_function(dyn_array_header *type)
 {
   DYN_ARRAY_STATS(++dyn_array_stats_free);
   DYN_ARRAY_FUNCTION_FREE(type);
